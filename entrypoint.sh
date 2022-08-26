@@ -7,6 +7,7 @@ timeout=$3
 skip_if_exists=$4
 variables=$5
 filename=$6
+branch=$7
 
 if [ -z $name ]; then
   echo "name parameter is mandatory"
@@ -26,11 +27,15 @@ fi
 
 repository=$GITHUB_REPOSITORY
 
-if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
-  branch=${GITHUB_HEAD_REF}
-else
-  branch=$(echo ${GITHUB_REF#refs/heads/})
+if [ -z $branch ]; then
+    if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+      branch=${GITHUB_HEAD_REF}
+    else
+      branch=$(echo ${GITHUB_REF#refs/heads/})
+    fi
 fi
+
+
 
 params=""
 if [ ! -z $namespace ]; then
